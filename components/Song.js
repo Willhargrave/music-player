@@ -6,7 +6,7 @@ const Song = ({title, artist, album, duration}) => {
     const router = useRouter();
     return (
           <View>
-            <Image source={require('../assets/album.png')} />
+            <Image source={require('../assets/Liquidswords.png')} />
             <Text>{title}</Text>
             <Text>{artist}</Text>
             <Text>{album}</Text>
