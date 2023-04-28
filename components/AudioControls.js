@@ -2,6 +2,7 @@ import {View, TouchableOpacity, Image} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {Audio} from 'expo-av';
 import style from './styles/Audiocontrols.style';
+import styles from './styles/song.style';
 
 const AudioControls = (props) => {
 const [sound, setSound] = useState(null);
@@ -50,7 +51,7 @@ const onPlaybackStatusUpdate = (status) => {
           await sound.playFromPositionAsync(sound.positionMillis - 10000);
         }
       };
-      
+
 useEffect(() => {
     return sound
     ? () => {
@@ -60,18 +61,18 @@ useEffect(() => {
 }, [sound]);
 
     return (
-        <View>
+        <View style={styles.container}>
         <TouchableOpacity onPress={skipBackward}>
-            <Image source={require('./assets/images/rewind.png')}/>
+            <Image style={styles.controlImage}source={require('./assets/images/rewind.png')}/>
         </TouchableOpacity>
         <TouchableOpacity onPress={pauseSound}>
-        <Image source={require('./assets/images/pause.png')}/>
+        <Image style={styles.controlImage} source={require('./assets/images/pause.png')}/>
         </TouchableOpacity>
         <TouchableOpacity onPress={playSound}>
-        <Image source={require('./assets/images/play.webp')}/>
+        <Image style={styles.controlImage} source={require('./assets/images/play.webp')}/>
         </TouchableOpacity>
         <TouchableOpacity onPress={skipForward}>
-        <Image source={require('./assets/images/forward.png')}/>
+        <Image style={styles.controlImage} source={require('./assets/images/forward.png')}/>
         </TouchableOpacity>
         </View>
     );
