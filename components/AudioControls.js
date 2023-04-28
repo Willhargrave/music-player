@@ -1,11 +1,13 @@
-import {View, ScrollView, SafeAreaView, Text} from 'react-native';
-import { Stack, useRouter } from 'expo-router';
+import {View, Button, SliderBase, Text} from 'react-native';
 
+import style from './styles/Audiocontrols.style';
 const AudioControls = () => {
-    const router = useRouter();
+
     return (
         <View>
-        <Text>AudioControls</Text>
+        <TouchableOpacity>
+
+        </TouchableOpacity>
         </View>
     );
 }
