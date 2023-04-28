@@ -5,6 +5,6 @@ import Playlist from "./Playlist";
 import Song from "./Song";
 import SongList from "./SongList";
 import StatusBar from "./StatusBar";
-
+import Songs from "./AllSongs";
 
 export { AudioControls, AudioVisualization, Player, Playlist, Song, SongList, StatusBar };
