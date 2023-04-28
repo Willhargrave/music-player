@@ -50,8 +50,13 @@ useEffect(() => {
 
     return (
         <View>
-        <TouchableOpacity>
-
+        <TouchableOpacity onPress={skipBackward}>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={pauseSound}>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={playSound}>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={skipForward}>
         </TouchableOpacity>
         </View>
     );
