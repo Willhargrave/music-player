@@ -57,17 +57,19 @@ const Home = () => {
 };
 const handleSkipNext = async () => {
     try {
-      await sound.unloadAsync();
-      const nextIndex = Songs.findIndex((song) => song.key === selectedSong.key) + 1;
-      const nextSong = Songs[nextIndex <= Songs.length - 1 ? nextIndex : 0];
-      setSelectedSong(nextSong);
-      const { sound: nextSound } = await Audio.Sound.createAsync(nextSong.audio);
-      setSound(nextSound);
-      await nextSound.playAsync();
+        if (sound) {
+            await sound.unloadAsync();
+        }
+        const nextIndex = Songs.findIndex((song) => song.key === selectedSong.key) + 1;
+        const nextSong = Songs[nextIndex <= Songs.length - 1 ? nextIndex : 0];
+        setSelectedSong(nextSong);
+        const { sound: nextSound } = await Audio.Sound.createAsync(nextSong.audio);
+        setSound(nextSound);
+        await nextSound.playAsync();
     } catch (error) {
-      console.warn(error);
+        console.warn(error);
     }
-  };
+};
     return (
         <SafeAreaView
         style={{
