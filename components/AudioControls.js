@@ -6,7 +6,7 @@ import styles from './styles/Audiocontrols.style';
 
 const AudioControls = ({audio, onAudioPress, onSkipNext}) => {
 const [sound, setSound] = useState(null);
-const [isplaying, setIsPlaying] = useState(false);
+const [isPlaying, setIsPlaying] = useState(false);
 
 
 const onPlaybackStatusUpdate = (status) => {
@@ -14,54 +14,59 @@ const onPlaybackStatusUpdate = (status) => {
         setIsPlaying(status.isPlaying);
     }
 };
-    const playSound = async () => {
-        try {
-          const { sound } = await Audio.Sound.createAsync(audio, {
+    
+const playSound = async () => {
+    try {
+        if (sound) {
+            await sound.unloadAsync();
+        }
+        const { sound: newSound } = await Audio.Sound.createAsync(audio, {
             shouldPlay: true,
             onPlaybackStatusUpdate: onPlaybackStatusUpdate,
-          });
-          setSound(sound);
-        } catch (error) {
-          console.log('Error playing sound: ', error);
-        }
-      };
-    
-      const pauseSound = async () => {
-        if (sound) {
-          await sound.pauseAsync();
-          setIsPlaying(false);
-        }
-      };
-    
-      const stopSound = async () => {
-        if (sound) {
-          await sound.stopAsync();
-          setIsPlaying(false);
-        }
-      };
-    
-      const skipForward = async () => {
-        if (sound) {
-          await sound.playFromPositionAsync(sound.positionMillis + 10000);
-        }
-      };
-    
-      const skipBackward = async () => {
-        if (sound) {
-          await sound.playFromPositionAsync(sound.positionMillis - 10000);
-        }
-      };
-      const handleSkipNext = () => {
-        stopSound();
-        onSkipNext();
-      };
-useEffect(() => {
-    return sound
-    ? () => {
-        sound.unloadAsync();
+        });
+        setSound(newSound);
+    } catch (error) {
+        console.log('Error playing sound: ', error);
     }
-    : undefined;
-}, [sound]);
+};
+
+  const pauseSound = async () => {
+    if (sound && isPlaying) {
+      await sound.pauseAsync();
+      setIsPlaying(false);
+    }
+  };
+
+  const skipForward = async () => {
+    if (sound) {
+      const newPositionMillis = sound.positionMillis + 10000;
+      const durationMillis = await sound.getStatusAsync().then(status => status.durationMillis);
+      const finalPositionMillis = newPositionMillis > durationMillis ? durationMillis : newPositionMillis;
+      await sound.setPositionAsync(finalPositionMillis);
+    }
+};
+
+const skipBackward = async () => {
+    if (sound) {
+      const newPositionMillis = sound.positionMillis - 10000;
+      const finalPositionMillis = newPositionMillis < 0 ? 0 : newPositionMillis;
+      await sound.setPositionAsync(finalPositionMillis);
+    }
+};
+
+  const handleSkipNext = () => {
+    if (sound) {
+      sound.unloadAsync();
+    }
+    onSkipNext();
+  };
+
+  useEffect(() => {
+    return sound ? () => {
+      sound.unloadAsync();
+    } : undefined;
+  }, [sound]);
+
 
     return (
         <View style={styles.container}>
