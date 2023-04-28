@@ -1,13 +1,13 @@
 import {View, TouchableOpacity, Image} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {Audio} from 'expo-av';
-import style from './styles/Audiocontrols.style';
-import styles from './styles/song.style';
+import styles from './styles/Audiocontrols.style';
 
-const AudioControls = (props) => {
+
+const AudioControls = ({audio, onAudioPress, onSkipNext}) => {
 const [sound, setSound] = useState(null);
 const [isplaying, setIsPlaying] = useState(false);
-const {audio, onAudioPress} = props;
+
 
 const onPlaybackStatusUpdate = (status) => {
     if (status.isLoaded) {
@@ -51,7 +51,10 @@ const onPlaybackStatusUpdate = (status) => {
           await sound.playFromPositionAsync(sound.positionMillis - 10000);
         }
       };
-
+      const handleSkipNext = () => {
+        stopSound();
+        onSkipNext();
+      };
 useEffect(() => {
     return sound
     ? () => {
@@ -73,6 +76,9 @@ useEffect(() => {
         </TouchableOpacity>
         <TouchableOpacity onPress={skipForward}>
         <Image style={styles.controlImage} source={require('./assets/images/forward.png')}/>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleSkipNext}>
+        <Image style={styles.controlImage} source={require('./assets/images/skip.png')}/>
         </TouchableOpacity>
         </View>
     );

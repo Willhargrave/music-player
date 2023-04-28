@@ -55,6 +55,19 @@ const Home = () => {
         console.warn(error)
     }
 };
+const handleSkipNext = async () => {
+    try {
+      await sound.unloadAsync();
+      const nextIndex = Songs.findIndex((song) => song.key === selectedSong.key) + 1;
+      const nextSong = Songs[nextIndex <= Songs.length - 1 ? nextIndex : 0];
+      setSelectedSong(nextSong);
+      const { sound: nextSound } = await Audio.Sound.createAsync(nextSong.audio);
+      setSound(nextSound);
+      await nextSound.playAsync();
+    } catch (error) {
+      console.warn(error);
+    }
+  };
     return (
         <SafeAreaView
         style={{
@@ -71,10 +84,13 @@ const Home = () => {
                     duration={selectedSong.duration}
                     audio={selectedSong.audio}
                     image={selectedSong.image}/>
-                <AudioControls audio={selectedSong.audio} onAudioPress={handleAudioPress}/>
+                <AudioControls 
+                audio={selectedSong.audio} 
+                onAudioPress={handleAudioPress}
+                onSkipNext={handleSkipNext} />
                 </> ) 
                  : (
-                    <SongList songs={Songs} onSongPress={handleSongPress} />
+                    <SongList songs={Songs} onSongPress={handleSongPress}/>
                 )}
                 <AudioVisualization/>
                 
