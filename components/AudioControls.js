@@ -1,16 +1,17 @@
 import {View, TouchableOpacity, Image} from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, props} from 'react';
 import {Audio} from 'expo-av';
 import style from './styles/Audiocontrols.style';
 
 const AudioControls = () => {
 const [sound, setSound] = useState(null);
 const [isplaying, setIsPlaying] = useState(false);
+const {audio, onAudioPress} = props;
 async function playSound() {
     try {
         const {sound} = await Audio.Sound.createAsync(audio, {
             shouldPlay: true,
-            onPlaybackStatusUpdate: onPlatbackStatusUpdate,
+            onPlaybackStatusUpdate: onPlaybackStatusUpdate,
         });
         setSound(sound)
         setIsPlaying(true);

@@ -71,7 +71,7 @@ const Home = () => {
                     duration={selectedSong.duration}
                     audio={selectedSong.audio}
                     image={selectedSong.image}/>
-                <AudioControls onAudioPress={handleAudioPress}/>
+                <AudioControls audio={selectedSong.audio} onAudioPress={handleAudioPress}/>
                 </> ) 
                  : (
                     <SongList songs={Songs} onSongPress={handleSongPress} />
