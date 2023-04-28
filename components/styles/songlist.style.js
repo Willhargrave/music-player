@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
-    songContainer: {
+    container: {
       paddingVertical: 10,
       paddingHorizontal: 20,
       borderBottomWidth: 1,

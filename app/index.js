@@ -1,6 +1,9 @@
 import {View, ScrollView, SafeAreaView, Text} from 'react-native';
 import { Stack, useRouter } from 'expo-router';
-import { Player, AudioControls, AudioVisualization, Song, SongList, StatusBar, Playlist, Songs } from '../components';
+import { Player, AudioControls, AudioVisualization, Song, SongList, StatusBar, Playlist} from '../components';
+import Songs from '../components/AllSongs';
+import { useState } from 'react';
+
 const Home = () => {
     const router = useRouter();
     const [selectedSong, setSelectedSong] = useState(null);
@@ -14,7 +17,7 @@ const Home = () => {
         }}>
         <ScrollView showsVerticalScrollIndicator={false}>
             <View>
-                {selectedSong? (
+                {selectedSong ? (
                     <Song 
                     title={selectedSong.title}
                     artist={selectedSong.artist}
@@ -22,7 +25,7 @@ const Home = () => {
                     duration={selectedSong.duration}
                     audio={selectedSong.audio}
                     image={selectedSong.image}/>
-                ): (
+                ) : (
                     <SongList songs={Songs} onSongPress={handleSongPress} />
                 )}
                 <AudioVisualization/>

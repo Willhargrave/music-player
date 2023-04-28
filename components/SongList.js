@@ -1,12 +1,11 @@
 import {View, Text, TouchableOpacity} from 'react-native';
-import { Stack, useRouter } from 'expo-router';
-
+import React from 'react';
 import styles from './styles/songlist.style'
 const SongList = ({songs, onSongPress}) => {
-    const router = useRouter();
     return (
         <View>
         {songs.map((song) => {
+            return (
             <TouchableOpacity
             key={song.key}
             style={styles.container}
@@ -15,8 +14,10 @@ const SongList = ({songs, onSongPress}) => {
                 <Text style={styles.title}>{song.title}</Text>
                 <Text style={styles.artist}>{song.artist}</Text>
             </TouchableOpacity>
-        })}
+            )    
+    })}
         </View>
+    
     );
 }
 
