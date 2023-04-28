@@ -14,7 +14,7 @@ const Songs = [
         title: "Shadowboxin'",
         album: "Liquid Swords",
         duration: "3 minutes 30 seconds",  
-        audio: require("./assets/audio/Shadowboxin.mp3"),
+        audio: require("./assets/audio/ShadowBoxin.mp3"),
         image: require("./assets/images/Liquidswords1995.png"),
       },
       {
