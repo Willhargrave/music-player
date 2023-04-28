@@ -1,47 +1,56 @@
 import {View, TouchableOpacity, Image} from 'react-native';
-import React, {useState, useEffect, props} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Audio} from 'expo-av';
 import style from './styles/Audiocontrols.style';
 
-const AudioControls = () => {
+const AudioControls = (props) => {
 const [sound, setSound] = useState(null);
 const [isplaying, setIsPlaying] = useState(false);
 const {audio, onAudioPress} = props;
-async function playSound() {
-    try {
-        const {sound} = await Audio.Sound.createAsync(audio, {
+
+const onPlaybackStatusUpdate = (status) => {
+    if (status.isLoaded) {
+        setIsPlaying(status.isPlaying);
+    }
+};
+    const playSound = async () => {
+        try {
+          const { sound } = await Audio.Sound.createAsync(audio, {
             shouldPlay: true,
             onPlaybackStatusUpdate: onPlaybackStatusUpdate,
-        });
-        setSound(sound)
-        setIsPlaying(true);
-    } catch (error) {
-        console.log("Error playing sound: ", error)
-    }
-}
-async function pauseSound() {
-    if (sound) {
-        await sound.pauseAsync();
-        setIsPlaying(false);
-    }
-}
-async function stopSound() {
-    if (sound) {
-        await sound.stopAsync();
-        setIsPlaying(false);
-    }
-}
-async function skipForward() {
-    if (sound) {
-        await sound.playFromPositionAsync(sound.positionMillis + 10000);
-    }
-}
-async function skipBackward() {
-    if (sound) {
-        await sound.playFromPositionAsync(sound.positionMillis - 10000);
-    }
-}
-
+          });
+          setSound(sound);
+        } catch (error) {
+          console.log('Error playing sound: ', error);
+        }
+      };
+    
+      const pauseSound = async () => {
+        if (sound) {
+          await sound.pauseAsync();
+          setIsPlaying(false);
+        }
+      };
+    
+      const stopSound = async () => {
+        if (sound) {
+          await sound.stopAsync();
+          setIsPlaying(false);
+        }
+      };
+    
+      const skipForward = async () => {
+        if (sound) {
+          await sound.playFromPositionAsync(sound.positionMillis + 10000);
+        }
+      };
+    
+      const skipBackward = async () => {
+        if (sound) {
+          await sound.playFromPositionAsync(sound.positionMillis - 10000);
+        }
+      };
+      
 useEffect(() => {
     return sound
     ? () => {
