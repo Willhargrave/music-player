@@ -1,13 +1,14 @@
-import {View, TouchableOpacity} from 'react-native';
+import {View, TouchableOpacity, Image} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {Audio} from 'expo-av';
 import style from './styles/Audiocontrols.style';
+
 const AudioControls = () => {
 const [sound, setSound] = useState(null);
 const [isplaying, setIsPlaying] = useState(false);
 async function playSound() {
     try {
-        const {sound} = await Audio.Sound.createAsync(audio {
+        const {sound} = await Audio.Sound.createAsync(audio, {
             shouldPlay: true,
             onPlaybackStatusUpdate: onPlatbackStatusUpdate,
         });
@@ -51,12 +52,16 @@ useEffect(() => {
     return (
         <View>
         <TouchableOpacity onPress={skipBackward}>
+            <Image source={require('./assets/images/rewind.png')}/>
         </TouchableOpacity>
         <TouchableOpacity onPress={pauseSound}>
+        <Image source={require('./assets/images/pause.png')}/>
         </TouchableOpacity>
         <TouchableOpacity onPress={playSound}>
+        <Image source={require('./assets/images/play.webp')}/>
         </TouchableOpacity>
         <TouchableOpacity onPress={skipForward}>
+        <Image source={require('./assets/images/forward.png')}/>
         </TouchableOpacity>
         </View>
     );
