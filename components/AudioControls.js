@@ -1,16 +1,24 @@
 import {View, TouchableOpacity, Image} from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {Audio} from 'expo-av';
 import styles from './styles/Audiocontrols.style';
-
+import AudioSlider from './Slider';
 
 const AudioControls = ({audio, onAudioPress, onSkipNext}) => {
     const [sound, setSound] = useState(null);
-    const [isplaying, setIsPlaying] = useState(false);
-  
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [durationMillis, setDurationMillis] = useState(0);
+    const [positionMillis, setPositionMillis] = useState(0);
+    const soundRef = useRef(null);
+    const [sliderValue, setSliderValue] = useState(0);
+
+
     const onPlaybackStatusUpdate = (status) => {
       if (status.isLoaded) {
         setIsPlaying(status.isPlaying);
+        setDurationMillis(status.durationMillis);
+        setPositionMillis(status.positionMillis);
+        setSliderValue(status.positionMillis / status.durationMillis);
       }
     };
   
@@ -21,6 +29,7 @@ const AudioControls = ({audio, onAudioPress, onSkipNext}) => {
           onPlaybackStatusUpdate: onPlaybackStatusUpdate,
         });
         setSound(sound);
+        soundRef.current = sound;
       } catch (error) {
         console.log("Error playing sound: ", error);
       }
@@ -32,20 +41,15 @@ const AudioControls = ({audio, onAudioPress, onSkipNext}) => {
           setIsPlaying(false);
         }
       };
-      const skipForward = async () => {
-        if (sound && sound.getStatusAsync().isLoaded) {
-          const position = await sound.getStatusAsync().positionMillis;
-          await sound.setPositionAsync(position + 10000);
+
+    const handleSliderValueChange = (value) => {
+        setSliderValue(value);
+        if (soundRef.current && (soundRef.current.getStatusAsync()).isLoaded) {
+            const position = value * durationMillis;
+            soundRef.current.setPositionAsync(position)
         }
-      };
-      
-      const skipBackward = async () => {
-        if (sound && sound.getStatusAsync().isLoaded) {
-          const position = await sound.getStatusAsync().positionMillis;
-          await sound.setPositionAsync(position - 10000);
-        }
-      };
-      
+    }
+     
     const handleSkipNext = () => {
       if (sound) {
         sound.unloadAsync();
@@ -54,31 +58,31 @@ const AudioControls = ({audio, onAudioPress, onSkipNext}) => {
     };
   
     useEffect(() => {
-      return sound ? () => {
-        sound.unloadAsync();
+      return soundRef.current ? () => {
+        soundRef.current.unloadAsync();
       } : undefined;
-    }, [sound]);
+    }, []);
 
 
     return (
         <View style={styles.container}>
-        <TouchableOpacity onPress={skipBackward}>
-            <Image style={styles.controlImage}source={require('./assets/images/rewind.png')}/>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={pauseSound}>
-        <Image style={styles.controlImage} source={require('./assets/images/pause.png')}/>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={playSound}>
-        <Image style={styles.controlImage} source={require('./assets/images/play.webp')}/>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={skipForward}>
-        <Image style={styles.controlImage} source={require('./assets/images/forward.png')}/>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handleSkipNext}>
+      <TouchableOpacity onPress={pauseSound}>
+        <Image style={styles.controlImage} source={isplaying ? require('./assets/images/pause.png') : require('./assets/images/play.webp')}/>
+      </TouchableOpacity>
+      <Slider
+        value={sliderValue}
+        onValueChange={handleSliderValueChange}
+        minimumValue={0}
+        maximumValue={1}
+        minimumTrackTintColor="#FFFFFF"
+        maximumTrackTintColor="#000000"
+        thumbTintColor="#FFFFFF"
+      />
+      <TouchableOpacity onPress={handleSkipNext}>
         <Image style={styles.controlImage} source={require('./assets/images/skip.png')}/>
-        </TouchableOpacity>
-        </View>
-    );
+      </TouchableOpacity>
+    </View>
+  );
 }
 
 export default AudioControls;

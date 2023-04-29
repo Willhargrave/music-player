@@ -3,9 +3,9 @@ import {View, Text, Button} from 'react-native';
 import Slider from '@react-native-community/slider';
 import { Audio } from 'expo-av';
 
-export default function AudioPlayer() {
+const AudioSlider = () => {
     const [sound, setSound] = useState(null)
-    const [isplaying, setIsPLaying] = useState(false)
+    const [isPlaying, setIsPlaying] = useState(false)
     const [position, setPosition] = useState(0)
     const [duration, setDuration] = useState(0)
 
@@ -44,7 +44,7 @@ function onSliderValueChange(value) {
 
 return (
     <View>
-        <Text>{isplaying ? 'Playing' : 'Paused'}</Text>
+        <Text>{isPlaying ? 'Playing' : 'Paused'}</Text>
             <Slider
             style={{width: '100%', height: 40}}
             minimumValue={0}
@@ -59,5 +59,6 @@ return (
             )}
     </View>
 );
+}
 
-        }
+export default AudioSlider;
