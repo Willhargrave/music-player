@@ -18,43 +18,53 @@ const Home = () => {
     };
 
     const handleAudioPress = async (action) => {
-         try {
-            if(!sound) {
-                const { sound: newSound } = await Audio.Sound.createAsync(selectedSong.audio);
-                setSound(newSound);
-                await newSound.playAsync();
-            } else {
-                switch (action) {
-                    case 'play' :  
-                        await sound.playAsync();
-                        break;
-                    case 'pause' :
-                        await sound.pauseAsync();
-                        break;
-                    case 'previous' :
-                        await sound.unloadAsync();
-                        const previousIndex = Songs.findIndex((song) => song.key === selectedSong.key) - 1;   
-                        const previousSong = Songs[previousIndex >= 0 ? previousIndex : Songs.length - 1];
-                        setSelectedSong(previousSong);
-                        const { sound: previousSound} = await Audio.Sound.createAsync(previousSong.audio);
-                        setSound(previousSound);
-                        await previousSound.playAsync();
-                        break;
-                    case 'next' :
-                        await sound.unloadAsync();
-                        const nextIndex = Songs.findIndex((song) => song.key === selectedSong.key) + 1;   
-                        const nextSong = Songs[nextIndex <= Songs.length - 1 ? nextIndex : 0];
-                        setSelectedSong(nextSong);
-                        const { sound: nextSound} = await Audio.Sound.createAsync(nextSong.audio);
-                        setSound(nextSound);
-                        await nextSound.playAsync();
-                        break;
-                    }
-         }
-    } catch (error) {
-        console.warn(error)
-    }
-};
+        try {
+          if (!sound) {
+            const { sound: newSound } = await Audio.Sound.createAsync(
+              selectedSong.audio
+            );
+            setSound(newSound);
+            await newSound.playAsync();
+          } else {
+            switch (action) {
+              case "play":
+                await sound.playAsync();
+                break;
+              case "pause":
+                await sound.pauseAsync();
+                break;
+              case "previous":
+                await sound.unloadAsync();
+                const previousIndex =
+                  Songs.findIndex((song) => song.key === selectedSong.key) - 1;
+                const previousSong =
+                  Songs[previousIndex >= 0 ? previousIndex : Songs.length - 1];
+                setSelectedSong(previousSong);
+                const { sound: previousSound } = await Audio.Sound.createAsync(
+                  previousSong.audio
+                );
+                setSound(previousSound);
+                await previousSound.playAsync();
+                break;
+              case "next":
+                await sound.unloadAsync();
+                const nextIndex =
+                  Songs.findIndex((song) => song.key === selectedSong.key) + 1;
+                const nextSong =
+                  Songs[nextIndex <= Songs.length - 1 ? nextIndex : 0];
+                setSelectedSong(nextSong);
+                const { sound: nextSound } = await Audio.Sound.createAsync(
+                  nextSong.audio
+                );
+                setSound(nextSound);
+                await nextSound.playAsync();
+                break;
+            }
+          }
+        } catch (error) {
+          console.warn(error);
+        }
+      };
 const handleSkipNext = async () => {
     try {
         if (sound) {

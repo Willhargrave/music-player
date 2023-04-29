@@ -5,67 +5,59 @@ import styles from './styles/Audiocontrols.style';
 
 
 const AudioControls = ({audio, onAudioPress, onSkipNext}) => {
-const [sound, setSound] = useState(null);
-const [isPlaying, setIsPlaying] = useState(false);
-
-
-const onPlaybackStatusUpdate = (status) => {
-    if (status.isLoaded) {
+    const [sound, setSound] = useState(null);
+    const [isplaying, setIsPlaying] = useState(false);
+  
+    const onPlaybackStatusUpdate = (status) => {
+      if (status.isLoaded) {
         setIsPlaying(status.isPlaying);
-    }
-};
-    
-const playSound = async () => {
-    try {
-        if (sound) {
-            await sound.unloadAsync();
-        }
-        const { sound: newSound } = await Audio.Sound.createAsync(audio, {
-            shouldPlay: true,
-            onPlaybackStatusUpdate: onPlaybackStatusUpdate,
+      }
+    };
+  
+    const playSound = async () => {
+      try {
+        const { sound } = await Audio.Sound.createAsync(audio, {
+          shouldPlay: true,
+          onPlaybackStatusUpdate: onPlaybackStatusUpdate,
         });
-        setSound(newSound);
-    } catch (error) {
-        console.log('Error playing sound: ', error);
-    }
-};
-
-  const pauseSound = async () => {
-    if (sound && isPlaying) {
-      await sound.pauseAsync();
-      setIsPlaying(false);
-    }
-  };
-
-  const skipForward = async () => {
-    if (sound) {
-      const newPositionMillis = sound.positionMillis + 10000;
-      const durationMillis = await sound.getStatusAsync().then(status => status.durationMillis);
-      const finalPositionMillis = newPositionMillis > durationMillis ? durationMillis : newPositionMillis;
-      await sound.setPositionAsync(finalPositionMillis);
-    }
-};
-
-const skipBackward = async () => {
-    if (sound) {
-      const newPositionMillis = sound.positionMillis - 10000;
-      const finalPositionMillis = newPositionMillis < 0 ? 0 : newPositionMillis;
-      await sound.setPositionAsync(finalPositionMillis);
-    }
-};
-
-  const handleSkipNext = () => {
-    if (sound) {
-      sound.unloadAsync();
-    }
-    onSkipNext();
-  };
-
-  useEffect(() => {
-    return sound ? () => {
-      sound.unloadAsync();
-    } : undefined;
-  }, [sound]);
+        setSound(sound);
+      } catch (error) {
+        console.log("Error playing sound: ", error);
+      }
+    };
+  
+    const pauseSound = async () => {
+        if (sound && sound.getStatusAsync().isLoaded) {
+          await sound.pauseAsync();
+          setIsPlaying(false);
+        }
+      };
+      const skipForward = async () => {
+        if (sound && sound.getStatusAsync().isLoaded) {
+          const position = await sound.getStatusAsync().positionMillis;
+          await sound.setPositionAsync(position + 10000);
+        }
+      };
+      
+      const skipBackward = async () => {
+        if (sound && sound.getStatusAsync().isLoaded) {
+          const position = await sound.getStatusAsync().positionMillis;
+          await sound.setPositionAsync(position - 10000);
+        }
+      };
+      
+    const handleSkipNext = () => {
+      if (sound) {
+        sound.unloadAsync();
+      }
+      onSkipNext();
+    };
+  
+    useEffect(() => {
+      return sound ? () => {
+        sound.unloadAsync();
+      } : undefined;
+    }, [sound]);
 
 
     return (
