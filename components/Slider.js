@@ -8,7 +8,7 @@ export default function AudioPlayer() {
     const [isplaying, setIsPLaying] = useState(false)
     const [position, setPosition] = useState(0)
     const [duration, setDuration] = useState(0)
-}
+
 
 async function loadAudio() {
     const {sound} = await Audio.sound.createAsync(
@@ -42,6 +42,22 @@ function onSliderValueChange(value) {
         setPosition(value);
 }
 
+return (
+    <View>
+        <Text>{isplaying ? 'Playing' : 'Paused'}</Text>
+            <Slider
+            style={{width: '100%', height: 40}}
+            minimumValue={0}
+            maximumValue={duration}
+            value={position}
+            onValueChange={onSliderValueChange} 
+            />
+            {isPlaying ? (
+                <Button title="Pause" onPress={pauseAudio} />
+            ) : (
+                <Button title="Play" onPress={playAudio} />
+            )}
+    </View>
+);
 
-
-
+        }
