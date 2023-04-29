@@ -1,64 +1,79 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Text, Button} from 'react-native';
 import Slider from '@react-native-community/slider';
 import { Audio } from 'expo-av';
 
-const AudioSlider = () => {
-    const [sound, setSound] = useState(null)
-    const [isPlaying, setIsPlaying] = useState(false)
-    const [position, setPosition] = useState(0)
-    const [duration, setDuration] = useState(0)
+const AudioSlider = ({audio}) => {
+    const [sound, setSound] = useState(null);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [position, setPosition] = useState(0);
+    const [duration, setDuration] = useState(0);
 
+    useEffect(() => {
+        const loadAudio = async () => {
+            const {sound} = await Audio.Sound.createAsync(
+                audio,
+                {shouldPlay: true}
+            );
+            setSound(sound);
+            setIsPlaying(true);
+            sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
+        };
+        loadAudio();
 
-async function loadAudio() {
-    const {sound} = await Audio.sound.createAsync(
-        {uri: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'},
-        {shouldPlay: true}
-    );
-    setSound(sound);
-    setIsPlaying(true);
-    sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
-}
-function onPlaybackStatusUpdate(status) {
-    if (status.isLoaded) {
-        setPosition(status.positionMillis);
-        setDuration(status.durationMillis);
-        setIsPlaying(status.isPlaying)
-    }
-}
+        return () => {
+            if (sound) {
+                sound.unloadAsync();
+            }
+        };
+    }, [audio]);
 
-function playAudio() {
-    sound.playAsync();
-    setIsPlaying(true);
-}
+    const onPlaybackStatusUpdate = (status) => {
+        if (status.isLoaded) {
+            setPosition(status.positionMillis);
+            setDuration(status.durationMillis);
+            setIsPlaying(status.isPlaying);
+        }
+    };
 
-function pauseAudio() {
-    sound.pauseAsync();
-    setIsPlaying(false);
-}
+    const playAudio = () => {
+        if (sound) {
+            sound.playAsync();
+            setIsPlaying(true);
+        }
+    };
 
-function onSliderValueChange(value) {     
-        sound.setPositionAsync(value)
-        setPosition(value);
-}
+    const pauseAudio = () => {
+        if (sound) {
+            sound.pauseAsync();
+            setIsPlaying(false);
+        }
+    };
 
-return (
-    <View>
-        <Text>{isPlaying ? 'Playing' : 'Paused'}</Text>
+    const onSliderValueChange = (value) => {
+        if (sound) {
+            sound.setPositionAsync(value);
+            setPosition(value);
+        }
+    };
+
+    return (
+        <View>
+            <Text>{isPlaying ? 'Playing' : 'Paused'}</Text>
             <Slider
-            style={{width: '100%', height: 40}}
-            minimumValue={0}
-            maximumValue={duration}
-            value={position}
-            onValueChange={onSliderValueChange} 
+                style={{width: '100%', height: 40}}
+                minimumValue={0}
+                maximumValue={duration}
+                value={position}
+                onValueChange={onSliderValueChange} 
             />
             {isPlaying ? (
                 <Button title="Pause" onPress={pauseAudio} />
             ) : (
                 <Button title="Play" onPress={playAudio} />
             )}
-    </View>
-);
-}
+        </View>
+    );
+};
 
 export default AudioSlider;

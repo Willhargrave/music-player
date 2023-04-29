@@ -67,9 +67,9 @@ const AudioControls = ({audio, onAudioPress, onSkipNext}) => {
     return (
         <View style={styles.container}>
       <TouchableOpacity onPress={pauseSound}>
-        <Image style={styles.controlImage} source={isplaying ? require('./assets/images/pause.png') : require('./assets/images/play.webp')}/>
+        <Image style={styles.controlImage} source={isPlaying ? require('./assets/images/pause.png') : require('./assets/images/play.webp')}/>
       </TouchableOpacity>
-      <Slider
+      <AudioSlider
         value={sliderValue}
         onValueChange={handleSliderValueChange}
         minimumValue={0}
