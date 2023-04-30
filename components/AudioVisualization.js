@@ -1,5 +1,7 @@
-import {View, ScrollView, SafeAreaView, Text} from 'react-native';
-import { Stack, useRouter } from 'expo-router';
+import React, {useEffect, useRef} from 'react';
+import { Audio } from 'expo-av';
+import {View, Stylesheet} from 'react-native';
+
 
 const AudioVisualization = () => {
     const router = useRouter();
