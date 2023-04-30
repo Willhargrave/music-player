@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
 import { Audio } from "expo-av";
-
+import { useState } from "react";
 const AudioControls = ({
   audio,
   onAudioPress,
@@ -11,9 +11,9 @@ const AudioControls = ({
   sound,
   setSound,
 }) => {
-  const [isPlaying, setIsPlaying] = React.useState(false);
-  const [playbackPosition, setPlaybackPosition] = React.useState(null);
-  const [playbackDuration, setPlaybackDuration] = React.useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [playbackPosition, setPlaybackPosition] = useState(null);
+  const [playbackDuration, setPlaybackDuration] = useState(null);
 
   const handleAudioPress = async (action) => {
     switch (action) {
@@ -62,7 +62,20 @@ const AudioControls = ({
       setPlaybackPosition(value);
     }
   };
-
+  const handleSliderSlidingComplete = async (value) => { 
+    if(sound) {
+        await sound.setPositionAsync(value);
+    }
+  }
+    useEffect(() => {
+        let interval;
+        if (sound && isPlaying) {
+            interval = setInterval(async () => {
+                const status = await sound.getStatusAsync();
+                handlePlaybackStatusUpdate(status);
+            }, 100);
+        } return () => clearInterval(interval);
+    }, [sound, isPlaying]);
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -83,6 +96,7 @@ const AudioControls = ({
         minimumTrackTintColor="#FFFFFF"
         maximumTrackTintColor="#000000"
         onValueChange={handleSliderValueChange}
+        onSlidingComplete={handleSliderSlidingComplete}
         disabled={!sound}
       />
       <TouchableOpacity onPress={() => handleAudioPress("next")}>
