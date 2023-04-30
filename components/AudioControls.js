@@ -18,6 +18,7 @@ const AudioControls = ({
   const handleAudioPress = async (action) => {
     switch (action) {
       case "play":
+        console.log(sound)
         if (!sound) {
           const { sound: newSound } = await Audio.Sound.createAsync(audio);
           setSound(newSound);
