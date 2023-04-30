@@ -11,10 +11,28 @@ const AudioControls = ({
   sound,
   setSound,
 }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
   const [playbackPosition, setPlaybackPosition] = useState(null);
   const [playbackDuration, setPlaybackDuration] = useState(null);
+  
+  useEffect(() => {
+    const loadAudio = async () => {
+        if (!sound) {
+            const { sound: newSound } = await Audio.Sound.createAsync(audio);
+            setSound(newSound);
+            setIsPlaying(true);
+        }
+    };
+    loadAudio();
 
+    return () => {
+        if (sound) {
+            sound.unloadAsync();
+            setSound(null);
+        }
+    };
+  }, [audio, sound, setSound]);
+  
   const handleAudioPress = async (action) => {
     switch (action) {
       case "play":
@@ -74,7 +92,7 @@ const AudioControls = ({
             interval = setInterval(async () => {
                 const status = await sound.getStatusAsync();
                 handlePlaybackStatusUpdate(status);
-            }, 100);
+            }, 1);
         } return () => clearInterval(interval);
     }, [sound, isPlaying]);
   return (
