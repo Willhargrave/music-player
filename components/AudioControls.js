@@ -32,11 +32,10 @@ const AudioControls = ({
         }
     };
   }, [audio, sound, setSound]);
-  
+
   const handleAudioPress = async (action) => {
     switch (action) {
       case "play":
-        console.log(sound)
         if (!sound) {
           const { sound: newSound } = await Audio.Sound.createAsync(audio);
           setSound(newSound);
@@ -48,8 +47,10 @@ const AudioControls = ({
         }
         break;
       case "pause":
-        await sound.pauseAsync();
-        setIsPlaying(false);
+        if (sound) {
+          await sound.pauseAsync();
+          setIsPlaying(false);
+        }
         break;
       case "previous":
         // handle previous track
@@ -86,15 +87,16 @@ const AudioControls = ({
         await sound.setPositionAsync(value);
     }
   }
-    useEffect(() => {
-        let interval;
-        if (sound && isPlaying) {
-            interval = setInterval(async () => {
-                const status = await sound.getStatusAsync();
-                handlePlaybackStatusUpdate(status);
-            }, 1);
-        } return () => clearInterval(interval);
-    }, [sound, isPlaying]);
+  useEffect(() => {
+    let interval;
+    if (sound && isPlaying) {
+      interval = setInterval(async () => {
+        const status = await sound.getStatusAsync();
+        handlePlaybackStatusUpdate(status);
+      }, 1);
+    }
+    return () => clearInterval(interval);
+  }, [sound, isPlaying]);
   return (
     <View style={styles.container}>
       <TouchableOpacity
