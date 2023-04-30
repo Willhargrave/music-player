@@ -27,16 +27,15 @@ const AudioVisualization = ({sound, playbackPosition, height}) => {
             context.fillRect(barX, height - barHeight, barWidth, barHeight);
         }
 
-        context.fillStyle = '#FFF';
+        context.fillStyle = '#FFFFFF';
         context.fillRect(0, height - 2, width, 2);
+        context.fillStyle = '#FFFFFF';
         context.fillRect(0, height - 2, width * progress, 2);
-    }
-   })}
-    return (
-        <View>
-        <Text>AudioVisualization</Text>
-        </View>
-    );
-}
+    };
+    const interval = setInterval(renderFrame, 100);
+    return () => clearInterval(interval); 
+}, [sound, playbackPosition, height]);
 
+return <View><canvas ref={canvasRef} /></View>
+};
 export default AudioVisualization;
