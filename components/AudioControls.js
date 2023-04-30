@@ -4,7 +4,7 @@ import {Audio} from 'expo-av';
 import styles from './styles/Audiocontrols.style';
 import Slider from '@react-native-community/slider';
 
-const AudioControls = ({audio, onAudioPress, onSkipNext}) => {
+const AudioControls = ({audio, onAudioPress, onSkipNext, sound}) => {
     const [sound, setSound] = useState(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [durationMillis, setDurationMillis] = useState(0);

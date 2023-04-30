@@ -99,6 +99,7 @@ const handleSkipNext = async () => {
                 <AudioControls 
                 audio={selectedSong.audio} 
                 onAudioPress={handleAudioPress}
+                sound={sound}
                 onSkipNext={handleSkipNext} />
                 </> ) 
                  : (
