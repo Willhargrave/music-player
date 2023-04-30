@@ -56,9 +56,10 @@ const AudioControls = ({
     }
   };
 
-  const handleSliderValueChange = (value) => {
+  const handleSliderValueChange = async (value) => {
     if (sound) {
-      sound.setPositionAsync(value);
+      await sound.setPositionAsync(value);
+      setPlaybackPosition(value);
     }
   };
 
