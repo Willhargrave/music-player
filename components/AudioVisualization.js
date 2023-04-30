@@ -1,41 +1,55 @@
-import React, {useEffect, useRef} from 'react';
-import { Audio } from 'expo-av';
-import {View, Stylesheet} from 'react-native';
+import React, { useRef, useEffect } from 'react';
+import { View, StyleSheet } from 'react-native';
 
-
-const AudioVisualization = ({sound, playbackPosition, height}) => {
-   const canvasRef = useRef(null);
-
-   useEffect(() => {
-    const canvas = canvasRef.current;
-    const context = canvas.getContext('2d');
-    const width = canvas.width;
-    const barWidth = 5;
-
-    const renderFrame = async () => { 
-        const status = await sound.getStatusAsync();
-        const pos = status.positionMillis || playbackPosition || 0;
-        const duration = status.durationMillis || 0;
-        const progress = pos / duration;
-        const barCount = Math.floor(width / barWidth);
-        const barPadding = (width - barCount * barwidth) / (barCount - 1);
-        context.clearRect(0, 0, width, height);
-
-        for (let i = 0; i < barCount; i++) { 
-            const barX = i * (barWidth + barPadding);
-            const barHeight = Math.floor(Math.random() * height);
-            context.fillRect(barX, height - barHeight, barWidth, barHeight);
-        }
-
-        context.fillStyle = '#FFFFFF';
-        context.fillRect(0, height - 2, width, 2);
-        context.fillStyle = '#FFFFFF';
-        context.fillRect(0, height - 2, width * progress, 2);
-    };
-    const interval = setInterval(renderFrame, 100);
-    return () => clearInterval(interval); 
-}, [sound, playbackPosition, height]);
-
-return <View><canvas ref={canvasRef} /></View>
+const Canvas = ({ canvasRef }) => {
+  return (
+    <View style={styles.container}>
+      <canvas ref={canvasRef} />
+    </View>
+  );
 };
+
+const AudioVisualization = ({ audioRef }) => {
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    const analyser = audioRef.current.context.createAnalyser();
+    const source = audioRef.current.getMediaElementSource();
+
+    source.connect(analyser);
+    analyser.connect(audioRef.current.context.destination);
+
+    const render = () => {
+      const width = canvas.width;
+      const height = canvas.height;
+      const frequencyData = new Uint8Array(analyser.frequencyBinCount);
+      analyser.getByteFrequencyData(frequencyData);
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = '#00CCFF';
+      const barWidth = (width / frequencyData.length) * 2.5;
+      let x = 0;
+      for (let i = 0; i < frequencyData.length; i++) {
+        const barHeight = (frequencyData[i] / 255) * height * 0.7;
+        ctx.fillRect(x, height - barHeight, barWidth, barHeight);
+        x += barWidth + 1;
+      }
+      requestAnimationFrame(render);
+    };
+
+    render();
+  }, [audioRef]);
+
+  return <Canvas canvasRef={canvasRef} />;
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
+
 export default AudioVisualization;
