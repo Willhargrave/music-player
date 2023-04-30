@@ -1,84 +1,113 @@
-import {View, TouchableOpacity, Image} from 'react-native';
-import React, {useState, useEffect, useRef} from 'react';
-import {Audio} from 'expo-av';
-import styles from './styles/Audiocontrols.style';
-import Slider from '@react-native-community/slider';
+import React from "react";
+import { StyleSheet, View, TouchableOpacity } from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
+import Slider from "@react-native-community/slider";
+import { Audio } from "expo-av";
 
-const AudioControls = ({audio, onAudioPress, onSkipNext, sound}) => {
-    const [sound, setSound] = useState(null);
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [durationMillis, setDurationMillis] = useState(0);
-    const [positionMillis, setPositionMillis] = useState(0);
-    const soundRef = useRef(null);
-    const [sliderValue, setSliderValue] = useState(0);
+const AudioControls = ({
+  audio,
+  onAudioPress,
+  onSkipNext,
+  sound,
+  setSound,
+}) => {
+  const [isPlaying, setIsPlaying] = React.useState(false);
+  const [playbackPosition, setPlaybackPosition] = React.useState(null);
+  const [playbackDuration, setPlaybackDuration] = React.useState(null);
 
-    const onPlaybackStatusUpdate = (status) => {
-        if (status.isLoaded) {
-            setIsPlaying(status.isPlaying);
-            setDurationMillis(status.durationMillis);
-            setPositionMillis(status.positionMillis);
-            setSliderValue(status.positionMillis / status.durationMillis);
+  const handleAudioPress = async (action) => {
+    switch (action) {
+      case "play":
+        if (!sound) {
+          const { sound: newSound } = await Audio.Sound.createAsync(audio);
+          setSound(newSound);
+          await newSound.playAsync();
+          setIsPlaying(true);
+        } else {
+          await sound.playAsync();
+          setIsPlaying(true);
         }
-    };
-
-    const playSound = async () => {
-        try {
-            const { sound } = await Audio.Sound.createAsync(audio, {
-                shouldPlay: true,
-                onPlaybackStatusUpdate: onPlaybackStatusUpdate,
-            });
-            setSound(sound);
-            soundRef.current = sound;
-        } catch (error) {
-            console.log("Error playing sound: ", error);
-        }
-    };
-
-    const pauseSound = async () => {
-        if (sound && sound.getStatusAsync().isLoaded) {
-            await sound.pauseAsync();
-            setIsPlaying(false);
-        }
-    };
-
-    const handleSliderValueChange = (value) => {
-        setSliderValue(value);
-        if (soundRef.current && (soundRef.current.getStatusAsync()).isLoaded) {
-            const position = value * durationMillis;
-            soundRef.current.setPositionAsync(position)
-        }
-    }
-    
-    const handleSkipNext = () => {
-        if (sound) {
-            sound.unloadAsync();
-        }
+        break;
+      case "pause":
+        await sound.pauseAsync();
+        setIsPlaying(false);
+        break;
+      case "previous":
+        // handle previous track
+        break;
+      case "next":
         onSkipNext();
-    };
+        setIsPlaying(true);
+        break;
+      default:
+        break;
+    }
+  };
 
-    useEffect(() => {
-        return soundRef.current ? () => {
-            soundRef.current.unloadAsync();
-        } : undefined;
-    }, []);
+  const handlePlaybackStatusUpdate = (playbackStatus) => {
+    if (playbackStatus.isLoaded) {
+      setPlaybackPosition(playbackStatus.positionMillis);
+      setPlaybackDuration(playbackStatus.durationMillis);
+      setIsPlaying(playbackStatus.isPlaying);
+    } else {
+      setPlaybackPosition(null);
+      setPlaybackDuration(null);
+      setIsPlaying(false);
+    }
+  };
 
-    return (
-        <View style={styles.container}>
-            <TouchableOpacity onPress={pauseSound}>
-                <Image style={styles.controlImage} source={isPlaying ? require('./assets/images/pause.png') : require('./assets/images/play.webp')}/>
-            </TouchableOpacity>
-            <Slider
-                style={styles.slider}
-                minimumValue={0}
-                maximumValue={1}
-                value={sliderValue}
-                onValueChange={handleSliderValueChange}
-            />
-            <TouchableOpacity onPress={handleSkipNext}>
-                <Image style={styles.controlImage} source={require('./assets/images/skip.png')}/>
-            </TouchableOpacity>
-        </View>
-    );
-}
+  const handleSliderValueChange = (value) => {
+    if (sound) {
+      sound.setPositionAsync(value);
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <TouchableOpacity
+        onPress={() => handleAudioPress(isPlaying ? "pause" : "play")}
+      >
+        <FontAwesome
+          name={isPlaying ? "pause" : "play"}
+          size={32}
+          color="white"
+          style={{ marginLeft: 20 }}
+        />
+      </TouchableOpacity>
+      <Slider
+        style={styles.slider}
+        minimumValue={0}
+        maximumValue={playbackDuration}
+        value={playbackPosition}
+        minimumTrackTintColor="#FFFFFF"
+        maximumTrackTintColor="#000000"
+        onValueChange={handleSliderValueChange}
+        disabled={!sound}
+      />
+      <TouchableOpacity onPress={() => handleAudioPress("next")}>
+        <FontAwesome
+          name="step-forward"
+          size={32}
+          color="white"
+          style={{ marginRight: 20 }}
+        />
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: 20,
+  },
+  slider: {
+    flex: 1,
+    marginLeft: 10,
+    marginRight: 10,
+  },
+});
 
 export default AudioControls;
