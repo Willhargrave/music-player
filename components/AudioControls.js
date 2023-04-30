@@ -3,7 +3,7 @@ import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
 import { Audio } from "expo-av";
-import { useState } from "react";
+import { useState, useRef } from "react";
 const AudioControls = ({
   audio,
   onAudioPress,
@@ -14,43 +14,24 @@ const AudioControls = ({
   const [isPlaying, setIsPlaying] = useState(true);
   const [playbackPosition, setPlaybackPosition] = useState(null);
   const [playbackDuration, setPlaybackDuration] = useState(null);
-  
-  useEffect(() => {
-    const loadAudio = async () => {
-        if (!sound) {
-            const { sound: newSound } = await Audio.Sound.createAsync(audio);
-            setSound(newSound);
-            setIsPlaying(true);
-        }
-    };
-    loadAudio();
-
-    return () => {
-        if (sound) {
-            sound.unloadAsync();
-            setSound(null);
-        }
-    };
-  }, [audio, sound, setSound]);
-
+  const soundRef = useRef(null)
   const handleAudioPress = async (action) => {
     switch (action) {
       case "play":
-        if (!sound) {
+        console.log(soundRef.current);
+        if (!soundRef.current) {
           const { sound: newSound } = await Audio.Sound.createAsync(audio);
-          setSound(newSound);
+          soundRef.current = newSound;
           await newSound.playAsync();
           setIsPlaying(true);
         } else {
-          await sound.playAsync();
+          await soundRef.current.playAsync();
           setIsPlaying(true);
         }
         break;
       case "pause":
-        if (sound) {
-          await sound.pauseAsync();
-          setIsPlaying(false);
-        }
+        await soundRef.current.pauseAsync();
+        setIsPlaying(false);
         break;
       case "previous":
         // handle previous track
@@ -77,26 +58,27 @@ const AudioControls = ({
   };
 
   const handleSliderValueChange = async (value) => {
-    if (sound) {
-      await sound.setPositionAsync(value);
+    if (soundRef.current) {
+      await soundRef.current.setPositionAsync(value);
       setPlaybackPosition(value);
     }
   };
-  const handleSliderSlidingComplete = async (value) => { 
-    if(sound) {
-        await sound.setPositionAsync(value);
+  const handleSliderSlidingComplete = async (value) => {
+    if (soundRef.current) {
+      await soundRef.current.setPositionAsync(value);
     }
-  }
+  };
   useEffect(() => {
     let interval;
-    if (sound && isPlaying) {
+    if (soundRef.current && isPlaying) {
       interval = setInterval(async () => {
-        const status = await sound.getStatusAsync();
+        const status = await soundRef.current.getStatusAsync();
         handlePlaybackStatusUpdate(status);
       }, 1);
     }
     return () => clearInterval(interval);
-  }, [sound, isPlaying]);
+  }, [soundRef.current, isPlaying]);
+   
   return (
     <View style={styles.container}>
       <TouchableOpacity
