@@ -4,7 +4,7 @@ import { View, StyleSheet } from 'react-native';
 const Canvas = ({ canvasRef }) => {
   return (
     <View style={styles.container}>
-      <canvas ref={canvasRef} />
+      <Canvas ref={canvasRef} />
     </View>
   );
 };
