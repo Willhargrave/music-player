@@ -1,19 +1,37 @@
-import React, { Component } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef } from 'react';
+import { View, StyleSheet } from 'react-native';
 import Canvas from 'react-native-canvas';
 
-class CanvasView extends Component {
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
 
-  handleCanvas = (canvas) => {
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = 'purple';
-    ctx.fillRect(0, 0, 100, 100);
-  }
+const CanvasView = forwardRef((props, ref) => {
+  const handleCanvas = (canvas) => {
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = 'purple';
+      ctx.fillRect(0, 0, 100, 100);
+    }
+  };
 
-  render() {
-    return (
-      <Canvas ref={this.handleCanvas}/>
-    )
-  }
-}
+  const canvasRef = useRef(null);
 
-export default CanvasView
+  useImperativeHandle(ref, () => ({
+    getContext: () => {
+      return canvasRef.current.getContext('2d');
+    },
+  }));
+
+  return (
+    <View style={styles.container}>
+      <Canvas ref={handleCanvas} />
+    </View>
+  );
+});
+
+export default CanvasView;
