@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-
+import Canvas from 'react-native-canvas';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -17,4 +17,4 @@ const CanvasView = React.forwardRef((props, ref) => {
   );
 });
 
-export default Canvas;
+export default CanvasView;
