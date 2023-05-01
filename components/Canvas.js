@@ -1,20 +1,19 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { Component } from 'react';
 import Canvas from 'react-native-canvas';
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
 
-const CanvasView = React.forwardRef((props, ref) => {
-  return (
-    <View style={styles.container}>
-      <Canvas ref={ref} />
-    </View>
-  );
-});
+class CanvasView extends Component {
 
-export default CanvasView;
+  handleCanvas = (canvas) => {
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = 'purple';
+    ctx.fillRect(0, 0, 100, 100);
+  }
+
+  render() {
+    return (
+      <Canvas ref={this.handleCanvas}/>
+    )
+  }
+}
+
+export default CanvasView
