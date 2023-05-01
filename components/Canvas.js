@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const Canvas = React.forwardRef((props, ref) => {
+const CanvasView = React.forwardRef((props, ref) => {
   return (
     <View style={styles.container}>
       <Canvas ref={ref} />

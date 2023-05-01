@@ -101,11 +101,12 @@ const handleSkipNext = async () => {
                 onAudioPress={handleAudioPress}
                 sound={sound}
                 onSkipNext={handleSkipNext} />
+                <AudioVisualization/>
                 </> ) 
                  : (
                     <SongList songs={Songs} onSongPress={handleSongPress}/>
                 )}
-                <AudioVisualization/>
+               
                 
             </View>
         </ScrollView>
