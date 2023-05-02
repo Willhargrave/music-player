@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import Canvas from 'react-native-canvas';
+import { defaultProps } from 'react-native-web/dist/cjs/modules/forwardedProps';
 
 const AudioVisualization = ({ audioRef }) => {
     const canvasRef = useRef(null);
@@ -48,3 +49,5 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+export default AudioVisualization;
