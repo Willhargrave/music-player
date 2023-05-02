@@ -101,7 +101,7 @@ const handleSkipNext = async () => {
                 onAudioPress={handleAudioPress}
                 sound={sound}
                 onSkipNext={handleSkipNext} />
-                <AudioVisualization/>
+                <AudioVisualization audioRef={sound}/>
                 </> ) 
                  : (
                     <SongList songs={Songs} onSongPress={handleSongPress}/>
