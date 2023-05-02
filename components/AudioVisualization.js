@@ -1,12 +1,13 @@
 import React, { useRef, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import Canvas from 'react-native-canvas';
-import { defaultProps } from 'react-native-web/dist/cjs/modules/forwardedProps';
+
 
 const AudioVisualization = ({ audioRef }) => {
+    useEffect(() => { if (!audioRef) return; }, [audioRef]);
     const canvasRef = useRef(null);
-  
     useEffect(() => {
+      
       const canvas = canvasRef.current;
       const ctx = canvas.getContext('2d');
       const analyser = audioRef?.current?.context.createAnalyser();
