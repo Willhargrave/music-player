@@ -1,7 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
-import CanvasView from './Canvas';
-
+import Canvas from 'react-native-canvas';
 const AudioVisualization = ({ audioRef }) => {
   const canvasRef = useRef(null);
 
@@ -34,7 +33,11 @@ const AudioVisualization = ({ audioRef }) => {
     render();
   }, [audioRef, canvasRef]);
 
-  return <CanvasView ref={canvasRef} />;
+  return (
+    <View style={styles.container}>
+      <Canvas ref={canvasRef} />
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({

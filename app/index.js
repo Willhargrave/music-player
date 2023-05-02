@@ -1,6 +1,6 @@
 import {View, ScrollView, SafeAreaView, Text} from 'react-native';
 import { Stack, useRouter } from 'expo-router';
-import { Player, AudioControls, AudioVisualization, Song, SongList, StatusBar, Playlist} from '../components';
+import { AudioControls, AudioVisualization, Song, SongList, StatusBar, Playlist} from '../components';
 import Songs from '../components/AllSongs';
 import { useState } from 'react';
 import {Audio} from 'expo-av';
