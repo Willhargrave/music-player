@@ -34,10 +34,12 @@ const AudioControls = ({
       case "play":
         await sound.playAsync();
         setIsPlaying(true);
+        setSelectedSong((prevState) => ({ ...prevState, isPlaying: true, sound: sound })); // Add sound object to state
         break;
       case "pause":
         await sound.pauseAsync();
         setIsPlaying(false);
+        setSelectedSong((prevState) => ({ ...prevState, isPlaying: false})); // Add sound object to state
         break;
       case "previous":
         // handle previous track
@@ -45,6 +47,7 @@ const AudioControls = ({
       case "next":
         onSkipNext();
         setIsPlaying(true);
+        setSelectedSong((prevState) => ({ ...prevState, isPlaying: true})); // Add sound object to state
         break;
       default:
         break;
