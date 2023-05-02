@@ -4,7 +4,7 @@ import Canvas from 'react-native-canvas';
 
 
 const AudioVisualization = ({ audioRef }) => {
-    useEffect(() => { if (!audioRef) return; }, [audioRef]);
+   if (!audioRef) return;
     const canvasRef = useRef(null);
     useEffect(() => {
       
