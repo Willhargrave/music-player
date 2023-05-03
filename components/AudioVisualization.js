@@ -4,10 +4,10 @@ import Canvas from 'react-native-canvas';
 
 
 const AudioVisualization = ({ audioRef }) => {
-   if (!audioRef) return;
+   
     const canvasRef = useRef(null);
     useEffect(() => {
-      
+      if (!audioRef) return;
       const canvas = canvasRef.current;
       const ctx = canvas.getContext('2d');
       const analyser = audioRef?.current?.context.createAnalyser();
